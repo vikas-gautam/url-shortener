@@ -1,0 +1,12 @@
+package models
+
+type User struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email" validate:"required,email"`
+	Password  string `json:"password" validate:"required"`
+}
+
+type URL struct {
+	ActualURL string `json:"actual_url"`
+}
