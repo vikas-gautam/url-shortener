@@ -10,7 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var FrontendDomain = "http://localhost:8081"
+var GatewayURL = "http://localhost:9090"
 
 func ShortURL(c *gin.Context) {
 
@@ -49,9 +49,9 @@ func ShortURL(c *gin.Context) {
 
 	GeneratedId, _ := internal.ShortenURL(actual_url, userData)
 
-	shortURL := FrontendDomain + "/" + GeneratedId
+	shortURL := GatewayURL + "/" + GeneratedId
 
-	c.IndentedJSON(http.StatusAccepted, models.ShortenerResponse{
+	c.JSON(http.StatusOK, models.ShortenerResponse{
 		ActualURL:    url.ActualURL,
 		ShortenedURL: shortURL,
 	})

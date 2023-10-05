@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"auth-service/models"
 	"fmt"
 	"net/http"
-	"shortener-service/models"
 
-	"shortener-service/storage/db"
+	"auth-service/storage/db"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -19,11 +19,11 @@ func Signup(c *gin.Context) {
 	var userSignup models.User
 
 	if err := c.BindJSON(&userSignup); err != nil {
-		log.WithFields(log.Fields{
-			"userInput": userSignup,
-		}).Error(err)
+		log.Error(err)
 		return
 	}
+
+	fmt.Printf("after unmarshal %v", userSignup)
 
 	hash, _ := HashPassword(userSignup.Password)
 
@@ -46,6 +46,8 @@ func Signup(c *gin.Context) {
 	})
 	if err != nil {
 		fmt.Printf("error while saving into the db: %s", err)
+		c.JSON(http.StatusInternalServerError, err)
+		return
 	}
 
 	c.IndentedJSON(http.StatusOK, models.Response{

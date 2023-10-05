@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"auth-service/internal"
+	"auth-service/models"
 	"net/http"
-	"shortener-service/internal"
-	"shortener-service/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +20,6 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	
 	authenticated, _, err := internal.Auth(username, password)
 
 	if !authenticated {
@@ -30,8 +29,9 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	c.IndentedJSON(http.StatusBadRequest, models.Response{
-		Status:  http.StatusText(http.StatusAccepted),
+
+	c.IndentedJSON(http.StatusOK, models.Response{
+		Status:  http.StatusText(http.StatusOK),
 		Message: "User has successfully authenticated",
 	})
 

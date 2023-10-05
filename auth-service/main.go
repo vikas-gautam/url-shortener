@@ -1,19 +1,19 @@
 package main
 
 import (
+	"auth-service/routes"
+	"auth-service/storage/db"
 	"os"
-	"shortener-service/routes"
-	"shortener-service/storage/db"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
 const (
-	apiPort = "8081"
+	apiPort = "8082"
 )
 
-// const DSN = "host=postgres port=5432 user=postgres password=password dbname=shortener sslmode=disable timezone=UTC connect_timeout=5"
+const DSN = "host=postgres port=5432 user=postgres password=password dbname=shortener sslmode=disable timezone=UTC connect_timeout=5"
 
 func main() {
 	os.Setenv("DSN", "host=localhost port=5432 user=postgres password=password dbname=shortener sslmode=disable timezone=UTC connect_timeout=5")
@@ -31,5 +31,5 @@ func main() {
 	routes.SetupRoutes(app)
 
 	app.Run("localhost:" + apiPort) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
-	logrus.Infof("Starting shortner service on port %s\n", apiPort)
+	logrus.Infof("Starting AUTH service on port %s\n", apiPort)
 }

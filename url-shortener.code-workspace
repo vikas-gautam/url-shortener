@@ -1,8 +1,16 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": "shortener-service"
+		},
+		{
+			"path": "gateway"
+		},
+		{
+			"path": "deploy"
+		},
+		{
+			"path": "auth-service"
 		}
-	],
-	"settings": {}
+	]
 }
