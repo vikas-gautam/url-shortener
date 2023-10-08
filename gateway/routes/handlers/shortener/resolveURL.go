@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var RESOLVE_SERVICE_URL = "http://localhost:8081/api/v1/"
+var RESOLVE_SERVICE_URL = "http://localhost:8081/"
 
 func ResolveURL(c *gin.Context) {
 
@@ -35,7 +35,7 @@ func ResolveURL(c *gin.Context) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != 307 {
 		//send the response from service as it is
 		b, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -47,6 +47,7 @@ func ResolveURL(c *gin.Context) {
 		return
 	}
 	redirect_location, _ := resp.Location()
+
 	c.Redirect(http.StatusTemporaryRedirect, redirect_location.String())
 
 }

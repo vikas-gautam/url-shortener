@@ -20,7 +20,7 @@ func SetupRoutes(app *gin.Engine) {
 
 	api := app.Group("/api/v1")
 
-	api.GET("/:url", handlers.ResolveURL)
+	app.GET("/:url", handlers.ResolveURL)
 	api.GET("/health", handlers.HealthCheck)
 	api.POST("/shorturl", handlers.ShortURL)
 

@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Login(c *gin.Context) {
+func Auth(c *gin.Context) {
 
 	username, password, ok := c.Request.BasicAuth()
 
@@ -32,7 +32,7 @@ func Login(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusOK, models.Response{
 		Status:  http.StatusText(http.StatusOK),
-		Message: "User has successfully logged in",
+		Message: "User has successfully authenticated",
 	})
 
 }

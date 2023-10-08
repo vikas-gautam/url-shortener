@@ -20,25 +20,11 @@ func ShortURL(c *gin.Context) {
 		logrus.Error(err)
 		return
 	}
+	username := c.GetHeader("username")
 
-	username, password, ok := c.Request.BasicAuth()
-
-	if !ok {
-		c.IndentedJSON(http.StatusBadRequest, models.Response{
-			Status:  http.StatusText(http.StatusBadRequest),
-			Message: "error parsing basic auth",
-		})
-		return
-	}
-
-	authenticated, userData, err := internal.Auth(username, password)
-
-	if !authenticated {
-		c.IndentedJSON(http.StatusBadRequest, models.Response{
-			Status:  http.StatusText(http.StatusBadRequest),
-			Message: err.Error(),
-		})
-		return
+	userData, err := internal.UserInfo(username)
+	if err != nil {
+		logrus.Error(err.Error())
 	}
 
 	//very important
@@ -47,6 +33,7 @@ func ShortURL(c *gin.Context) {
 		actual_url = "http://" + url.ActualURL
 	}
 
+	//replcae it with middleware
 	GeneratedId, _ := internal.ShortenURL(actual_url, userData)
 
 	shortURL := GatewayURL + "/" + GeneratedId

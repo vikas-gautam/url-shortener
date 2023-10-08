@@ -10,7 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Auth(username, password string) (bool, models.DBUser, error) {
+func EnsureAuth(username, password string) (bool, models.DBUser, error) {
 
 	//logic to check if user already exists or not
 	userData, err := db.GetUserByEmailid(username)

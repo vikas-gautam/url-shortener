@@ -24,5 +24,6 @@ func SetupRoutes(app *gin.Engine) {
 
 	api.POST("/signup", handlers.Signup)
 	api.POST("/login", handlers.Login)
+	api.GET("/auth", handlers.Auth)
 
 }

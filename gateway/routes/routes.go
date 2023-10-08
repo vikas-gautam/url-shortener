@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"gateway/middleware"
 	"gateway/routes/handlers"
 	"gateway/routes/handlers/auth"
 	"gateway/routes/handlers/shortener"
@@ -20,12 +21,15 @@ func SetupRoutes(app *gin.Engine) {
 		MaxAge:           300,
 	}))
 
-	api := app.Group("/api/v1")
+	unprotected := app.Group("/api/v1")
+	protected := app.Group("/api/v1")
 
-	api.GET("/:url", shortener.ResolveURL)
-	api.GET("/health", handlers.HealthCheck)
-	api.POST("/signup", auth.Signup)
-	api.POST("/login", auth.Login)
-	api.POST("/shorturl", shortener.ShortURL)
+	protected.Use(middleware.Authentication())
+
+	app.GET("/:url", shortener.ResolveURL)
+	unprotected.GET("/health", handlers.HealthCheck)
+	unprotected.POST("/signup", auth.Signup)
+	unprotected.POST("/login", auth.Login)
+	protected.POST("/shorturl", shortener.ShortURL)
 
 }
