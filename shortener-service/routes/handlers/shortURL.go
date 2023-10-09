@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"shortener-service/internal"
 	"shortener-service/models"
+	"shortener-service/storage/redis"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -33,10 +34,16 @@ func ShortURL(c *gin.Context) {
 		actual_url = "http://" + url.ActualURL
 	}
 
-	//replcae it with middleware
 	GeneratedId, _ := internal.ShortenURL(actual_url, userData)
 
 	shortURL := GatewayURL + "/" + GeneratedId
+
+	//inserting the same in redis
+	err = redis.SetData(GeneratedId, actual_url)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
 
 	c.JSON(http.StatusOK, models.ShortenerResponse{
 		ActualURL:    url.ActualURL,

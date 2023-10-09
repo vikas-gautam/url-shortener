@@ -37,7 +37,7 @@ func ConnectToDB() (*sql.DB, error) {
 	for {
 		connection, err := openDB(dsn)
 		if err != nil {
-			logrus.Warnf("Postgres is not ready yet...", err)
+			logrus.Warnln("Postgres is not ready yet...", err)
 			counts++
 
 		} else {
