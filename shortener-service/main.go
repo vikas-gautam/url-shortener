@@ -1,12 +1,14 @@
 package main
 
 import (
+	"log"
 	"os"
 	"shortener-service/routes"
 	"shortener-service/storage/db"
 	"shortener-service/storage/redis"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,13 +16,13 @@ const (
 	apiPort = "8081"
 )
 
-// const DSN = "host=postgres port=5432 user=postgres password=password dbname=shortener sslmode=disable timezone=UTC connect_timeout=5"
-
 func main() {
 
-	//setting up required env
-	os.Setenv("DSN", "host=localhost port=5432 user=postgres password=password dbname=shortener sslmode=disable timezone=UTC connect_timeout=5")
-	os.Setenv("REDIS_ENDPOINT", "localhost")
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+		os.Exit(1)
+	}
 
 	//connect to database
 	connDB, err := db.ConnectToDB()
@@ -41,6 +43,6 @@ func main() {
 
 	routes.SetupRoutes(app)
 
-	app.Run("localhost:" + apiPort) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	app.Run("0.0.0.0:" + apiPort) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 	logrus.Infof("Starting shortner service on port %s\n", apiPort)
 }

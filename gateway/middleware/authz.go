@@ -4,12 +4,11 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
-
-var AUTH_SERVICE_URL = "http://localhost:8082/api/v1/"
 
 func Authentication() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -18,7 +17,7 @@ func Authentication() gin.HandlerFunc {
 
 		username, password, _ := c.Request.BasicAuth()
 
-		GET_URL := AUTH_SERVICE_URL + "auth"
+		GET_URL := os.Getenv("AUTH_SERVICE_URL") + "auth"
 
 		r, err := http.NewRequest("GET", GET_URL, nil)
 		if err != nil {

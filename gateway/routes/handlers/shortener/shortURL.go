@@ -5,18 +5,17 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
-
-var SHORTENER_SERVICE_URL = "http://localhost:8081/api/v1/"
 
 func ShortURL(c *gin.Context) {
 
 	username, _, _ := c.Request.BasicAuth()
 	body, _ := io.ReadAll(c.Request.Body)
 
-	POST_URL := SHORTENER_SERVICE_URL + "shorturl"
+	POST_URL := os.Getenv("SHORTENER_SERVICE_URL") + "shorturl"
 
 	r, err := http.NewRequest("POST", POST_URL, bytes.NewBuffer(body))
 	if err != nil {

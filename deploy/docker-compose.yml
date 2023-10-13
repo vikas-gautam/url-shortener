@@ -1,0 +1,69 @@
+version: '3'
+services:
+
+  gateway:
+    build:
+      dockerfile: ./../gateway/gateway-service.dockerfile
+      context: ./../gateway
+    restart: always
+    ports:
+      - "9090:9090"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      RESOLVE_SERVICE_URL: "http://shortener-service:8081/"
+      SHORTENER_SERVICE_URL: "http://shortener-service:8081/api/v1/"
+      AUTH_SERVICE_URL: "http://auth-service:8082/api/v1/"
+
+  shortener-service:
+    build:
+      context: ./../shortener-service
+      dockerfile: ./../shortener-service/shortener-service.dockerfile
+    restart: always
+    ports:
+      - "8081:8081"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      DSN: "host=postgres port=5432 user=postgres password=password dbname=shortener sslmode=disable timezone=UTC connect_timeout=5"
+      REDIS_ENDPOINT: "redis"
+
+  auth-service:
+    build:
+      context: ./../auth-service
+      dockerfile: ./../auth-service/auth-service.dockerfile
+    restart: always
+    ports:
+      - "8082:8082"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      DSN: "host=postgres port=5432 user=postgres password=password dbname=shortener sslmode=disable timezone=UTC connect_timeout=5"
+
+
+
+  postgres:
+    image: 'postgres:14.2'
+    ports:
+      - "5432:5432"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: shortener
+    volumes:
+        - url-shortener:/var/lib/postgresql/data/
+  
+  redis:
+    image: 'redis'
+    ports:
+      - "6379:6379"
+
+volumes:
+  url-shortener:
+    external: true

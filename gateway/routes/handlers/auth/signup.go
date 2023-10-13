@@ -5,11 +5,10 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
-
-var SIGNUP_SERVICE_URL = "http://localhost:8082/api/v1/"
 
 func Signup(c *gin.Context) {
 
@@ -18,7 +17,7 @@ func Signup(c *gin.Context) {
 		panic(err)
 	}
 
-	POST_URL := SIGNUP_SERVICE_URL + "signup"
+	POST_URL := os.Getenv("AUTH_SERVICE_URL") + "signup"
 
 	r, err := http.NewRequest("POST", POST_URL, bytes.NewBuffer(body))
 	if err != nil {

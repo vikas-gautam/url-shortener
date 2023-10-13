@@ -5,17 +5,18 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
-var RESOLVE_SERVICE_URL = "http://localhost:8081/"
+// var RESOLVE_SERVICE_URL = "http://localhost:8081/"
 
 func ResolveURL(c *gin.Context) {
 
 	getParamID := c.Param("url")
 
-	GET_URL := RESOLVE_SERVICE_URL + getParamID
+	GET_URL := os.Getenv("RESOLVE_SERVICE_URL") + getParamID
 
 	req, err := http.NewRequest("GET", GET_URL, nil)
 	if err != nil {
