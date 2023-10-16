@@ -44,7 +44,6 @@ services:
       DSN: "host=postgres port=5432 user=postgres password=password dbname=shortener sslmode=disable timezone=UTC connect_timeout=5"
 
 
-
   postgres:
     image: 'postgres:14.2'
     ports:
@@ -59,11 +58,54 @@ services:
     volumes:
         - url-shortener:/var/lib/postgresql/data/
   
+  consumer-service:
+    build:
+      context: ./../consumer-service
+      dockerfile: ./../consumer-service/consumer-service.dockerfile
+    restart: always
+    # ports:
+    #   - "8082:8082"
+    deploy:
+      mode: replicated
+      replicas: 1
+      
   redis:
     image: 'redis'
     ports:
       - "6379:6379"
 
+  kafka:
+    image: docker.io/bitnami/kafka:3.5
+    ports:
+      - "9092:9092"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      # KRaft settings
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      # Listeners
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+
+  kafka-ui:
+      container_name: kafka-ui
+      image: provectuslabs/kafka-ui:latest
+      ports:
+        - 8080:8080
+      environment:
+        DYNAMIC_CONFIG_ENABLED: 'true'
+      volumes:
+        - "kafka_ui:/etc/kafkaui"
+
 volumes:
   url-shortener:
     external: true
+  kafka_data:
+    driver: local
+  kafka_ui:
+    driver: local

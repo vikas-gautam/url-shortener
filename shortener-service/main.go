@@ -1,14 +1,11 @@
 package main
 
 import (
-	"log"
-	"os"
 	"shortener-service/routes"
 	"shortener-service/storage/db"
 	"shortener-service/storage/redis"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,11 +15,11 @@ const (
 
 func main() {
 
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-		os.Exit(1)
-	}
+	// err := godotenv.Load(".env")
+	// if err != nil {
+	// 	log.Fatalf("Error loading .env file")
+	// 	os.Exit(1)
+	// }
 
 	//connect to database
 	connDB, err := db.ConnectToDB()

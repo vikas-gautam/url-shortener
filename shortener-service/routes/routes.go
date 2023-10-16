@@ -23,5 +23,5 @@ func SetupRoutes(app *gin.Engine) {
 	app.GET("/:url", handlers.ResolveURL)
 	api.GET("/health", handlers.HealthCheck)
 	api.POST("/shorturl", handlers.ShortURL)
-
+	api.POST("/broker", handlers.CreateComment)
 }
