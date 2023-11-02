@@ -31,5 +31,7 @@ func SetupRoutes(app *gin.Engine) {
 	unprotected.POST("/signup", auth.Signup)
 	unprotected.POST("/login", auth.Login)
 	protected.POST("/shorturl", shortener.ShortURL)
+	unprotected.POST("/reset", auth.GenerateResetToken)
+	unprotected.POST("/reset/:token", auth.ResetPassword)
 
 }

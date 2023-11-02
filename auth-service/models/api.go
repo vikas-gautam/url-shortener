@@ -7,3 +7,11 @@ type User struct {
 	Password  string `json:"password" validate:"required"`
 }
 
+type Reset struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
+type ResetPassword struct {
+	NewPassword     string `json:"password" validate:"required"`
+	ConfirmPassword string `json:"confirm_password" validate:"required"`
+}

@@ -68,3 +68,22 @@ func GetUserByEmailid(email string) (models.DBUser, error) {
 
 	return data, nil
 }
+
+func UpdateUser(email, newpasswd string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	query := `update users set password = $2, updated_at = $3 where email = $1`
+
+	_, err := db.ExecContext(ctx, query,
+		email,
+		newpasswd,
+		time.Now(),
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

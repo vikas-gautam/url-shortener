@@ -26,7 +26,7 @@ func main() {
 	if connDB == nil {
 		logrus.Panic("Can't connect to database postgres", err)
 	}
-	//connect to database
+	//connect to redis
 	connRedis, err := redis.ConnectToRedis()
 	if connRedis == nil {
 		logrus.Panic("Can't connect to database postgres", err)

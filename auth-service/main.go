@@ -3,6 +3,7 @@ package main
 import (
 	"auth-service/routes"
 	"auth-service/storage/db"
+	"auth-service/storage/redis"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -25,8 +26,16 @@ func main() {
 	if conn == nil {
 		logrus.Panic("Can't connect to database postgres", err)
 	}
+
+	//connect to redis
+	connRedis, err := redis.ConnectToRedis()
+	if connRedis == nil {
+		logrus.Panic("Can't connect to database postgres", err)
+	}
+
 	// if u not using method
 	db.Connection(conn)
+	redis.ConnectionRedis(connRedis)
 
 	app := gin.Default()
 
