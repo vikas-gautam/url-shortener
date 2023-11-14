@@ -1,6 +1,7 @@
 package main
 
 import (
+	"auth-service/config"
 	"auth-service/routes"
 	"auth-service/storage/db"
 	"auth-service/storage/redis"
@@ -15,27 +16,38 @@ const (
 
 func main() {
 
-	// err := godotenv.Load(".env")
-	// if err != nil {
-	// 	log.Fatalf("Error loading .env file")
-	// 	os.Exit(1)
-	// }
+	appConfig := config.Initialize()
 
 	//connect to database
-	conn, err := db.ConnectToDB()
-	if conn == nil {
+	_, err := db.NewdbConnection(appConfig)
+	if err != nil {
 		logrus.Panic("Can't connect to database postgres", err)
 	}
+
+	// conn, err := db.ConnectToDB(appConfig)
+	// if conn == nil {
+	// 	logrus.Panic("Can't connect to database postgres", err)
+	// }
 
 	//connect to redis
-	connRedis, err := redis.ConnectToRedis()
+
+	connRedis, err := redis.NewRedisClient(appConfig)
 	if connRedis == nil {
-		logrus.Panic("Can't connect to database postgres", err)
+		logrus.Panic("Can't connect to redis", err)
 	}
 
+	// connRedis, err := redis.ConnectToRedis(appConfig)
+	// if connRedis == nil {
+	// 	logrus.Panic("Can't connect to database postgres", err)
+	// }
+
+	// defer close(app.MailChan)
+	// fmt.Println("Starting mail listner")
+	// internal.ListenForMail()
+
 	// if u not using method
-	db.Connection(conn)
-	redis.ConnectionRedis(connRedis)
+	// db.Connection(conn)
+	// redis.ConnectionRedis(connRedis)
 
 	app := gin.Default()
 

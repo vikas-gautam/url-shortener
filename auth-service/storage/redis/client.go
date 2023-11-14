@@ -1,9 +1,9 @@
 package redis
 
 import (
+	"auth-service/config"
 	"context"
 	"fmt"
-	"os"
 	"time"
 
 	redis "github.com/redis/go-redis/v9"
@@ -13,9 +13,13 @@ import (
 var ctx = context.Background()
 var counts int64
 
-func RedisClient() (*redis.Client, error) {
+type RedisInfo struct {
+	redisClient *redis.Client
+}
+
+func RedisClient(endpoint string) (*RedisInfo, error) {
 	fmt.Println("Go Redis Client")
-	redisEndpoint := os.Getenv("REDIS_ENDPOINT")
+	redisEndpoint := endpoint
 
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     redisEndpoint + ":6379",
@@ -26,19 +30,19 @@ func RedisClient() (*redis.Client, error) {
 	err := redisClient.Ping(ctx).Err()
 	if err != nil {
 		logrus.Errorln("Failed to connect to redis:", err)
-		return redisClient, err
+		return &RedisInfo{}, err
 	}
 
 	logrus.Info("Connected to Redis")
-	return redisClient, nil
+	return &RedisInfo{
+		redisClient: redisClient,
+	}, nil
 }
 
-func ConnectToRedis() (*redis.Client, error) {
-	dsn := os.Getenv("DSN")
-	fmt.Println(dsn)
+func NewRedisClient(appConfig config.Config) (*RedisInfo, error) {
 
 	for {
-		connection, err := RedisClient()
+		connection, err := RedisClient(appConfig.REDIS_ENDPOINT)
 		if err != nil {
 			logrus.Warnln("Redis is not ready yet...", err)
 			counts++

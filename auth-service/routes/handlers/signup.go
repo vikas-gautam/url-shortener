@@ -2,10 +2,9 @@ package handlers
 
 import (
 	"auth-service/models"
+	"auth-service/storage/db"
 	"fmt"
 	"net/http"
-
-	"auth-service/storage/db"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -38,6 +37,8 @@ func Signup(c *gin.Context) {
 	}
 
 	//save the mapping into the database
+	db := db.DbInfo{}
+
 	_, err := db.InsertUser(models.DBUser{
 		FirstName: userSignup.FirstName,
 		LastName:  userSignup.LastName,

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"auth-service/internal"
 	"auth-service/models"
 	"auth-service/storage/db"
 	"auth-service/storage/redis"
@@ -11,18 +12,21 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	log "github.com/sirupsen/logrus"
 )
+
+var gw_reset_base = "http://localhost:9090/api/v1/reset/"
 
 func ResetPassword(c *gin.Context) {
 	// validate := validator.New()
+	redis := redis.RedisInfo{}
+	db := db.DbInfo{}
 
 	resetToken := c.Param("token")
 
 	var userInput models.User
 
 	if err := c.BindJSON(&userInput); err != nil {
-		log.Error(err)
+		logrus.Error(err)
 		return
 	}
 
@@ -77,11 +81,12 @@ func tokenGenerator() string {
 
 func GenerateResetToken(c *gin.Context) {
 	// validate := validator.New()
+	redis := redis.RedisInfo{}
 
 	var passwdReset models.User
 
 	if err := c.BindJSON(&passwdReset); err != nil {
-		log.Error(err)
+		logrus.Error(err)
 		return
 	}
 
@@ -102,8 +107,21 @@ func GenerateResetToken(c *gin.Context) {
 		return
 	}
 
+	// defer close(app.MailChan)
+	// fmt.Println("Starting mail listner")
+	// internal.ListenForMail()
+
+	msg := models.MailData{
+		From:    "mail@urlhortener.com",
+		To:      userName,
+		Subject: "Reset password link",
+		Content: gw_reset_base + generatedToken,
+	}
+
+	internal.SendMsg(msg)
+
 	c.IndentedJSON(http.StatusOK, models.Response{
 		Status:  http.StatusText(http.StatusOK),
-		Message: fmt.Sprintf("token generated: %v", generatedToken),
+		Message: fmt.Sprintf("reset password link has been sent to your email address: %v", userName),
 	})
 }

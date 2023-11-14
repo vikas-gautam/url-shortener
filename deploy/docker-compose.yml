@@ -43,6 +43,7 @@ services:
     environment:
       DSN: "host=postgres port=5432 user=postgres password=password dbname=shortener sslmode=disable timezone=UTC connect_timeout=5"
       REDIS_ENDPOINT: "redis"
+      CONFIG_FILE: "local"
 
   postgres:
     image: 'postgres:14.2'
@@ -101,6 +102,13 @@ services:
         DYNAMIC_CONFIG_ENABLED: 'true'
       volumes:
         - "kafka_ui:/etc/kafkaui"
+
+  mailhog:
+      image: jcalonso/mailhog
+      container_name: 'mailhog'
+      ports:
+        - "1025:1025"
+        - "8025:8025"
 
 volumes:
   url-shortener:

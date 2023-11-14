@@ -1,9 +1,9 @@
 package db
 
 import (
+	"auth-service/config"
 	"database/sql"
 	"fmt"
-	"os"
 	"time"
 
 	_ "github.com/jackc/pgconn"
@@ -15,23 +15,29 @@ import (
 
 var counts int64
 
-func openDB(dsn string) (*sql.DB, error) {
+type DbInfo struct {
+	dbClient *sql.DB
+}
+
+func openDB(dsn string) (DbInfo, error) {
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
-		return nil, err
+		return DbInfo{}, err
 	}
 
 	err = db.Ping()
 	if err != nil {
-		return nil, err
+		return DbInfo{}, err
 	}
 
-	return db, nil
+	return DbInfo{
+		dbClient: db,
+	}, nil
 
 }
 
-func ConnectToDB() (*sql.DB, error) {
-	dsn := os.Getenv("DSN")
+func NewdbConnection(appConfig config.Config) (DbInfo, error) {
+	dsn := appConfig.DSN
 	fmt.Println(dsn)
 
 	for {

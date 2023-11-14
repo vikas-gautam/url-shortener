@@ -15,3 +15,14 @@ type ResetPassword struct {
 	NewPassword     string `json:"password" validate:"required"`
 	ConfirmPassword string `json:"confirm_password" validate:"required"`
 }
+
+type MailData struct {
+	To      string
+	From    string
+	Subject string
+	Content string
+}
+
+type AppConfig struct {
+	MailChan chan MailData
+}

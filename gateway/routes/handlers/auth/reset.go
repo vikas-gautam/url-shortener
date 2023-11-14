@@ -45,12 +45,14 @@ func GenerateResetToken(c *gin.Context) {
 
 func ResetPassword(c *gin.Context) {
 
+	resetToken := c.Param("token")
+
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		panic(err)
 	}
 
-	POST_URL := os.Getenv("AUTH_SERVICE_URL") + "reset"
+	POST_URL := os.Getenv("AUTH_SERVICE_URL") + "reset/" + resetToken
 
 	r, err := http.NewRequest("POST", POST_URL, bytes.NewBuffer(body))
 	if err != nil {

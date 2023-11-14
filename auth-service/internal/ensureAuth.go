@@ -12,6 +12,8 @@ import (
 
 func EnsureAuth(username, password string) (bool, models.DBUser, error) {
 
+	db := db.DbInfo{}
+
 	//logic to check if user already exists or not
 	userData, err := db.GetUserByEmailid(username)
 	if err != nil && err == sql.ErrNoRows {
