@@ -22,10 +22,10 @@ func SetupRoutes(app *gin.Engine) {
 
 	api.GET("/health", handlers.HealthCheck)
 
-	api.POST("/signup", handlers.Signup)
+	api.POST("/signup", handlers.Repo.Signup)
 	api.POST("/login", handlers.Login)
 	api.GET("/auth", handlers.Auth)
 	api.POST("/reset", handlers.GenerateResetToken)
-	api.POST("/reset/:token", handlers.ResetPassword)
+	api.POST("/reset/:token", handlers.Repo.ResetPassword)
 
 }

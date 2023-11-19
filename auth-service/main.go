@@ -16,11 +16,11 @@ const (
 
 func main() {
 
-	appConfig := config.Initialize()
+	configInfo := config.Initialize()
 
 	//connect to database
-	_, err := db.NewdbConnection(appConfig)
-	if err != nil {
+	dbConn, err := db.NewdbConnection(configInfo)
+	if dbConn == nil {
 		logrus.Panic("Can't connect to database postgres", err)
 	}
 
@@ -31,10 +31,13 @@ func main() {
 
 	//connect to redis
 
-	connRedis, err := redis.NewRedisClient(appConfig)
+	connRedis, err := redis.NewRedisClient(confVars)
 	if connRedis == nil {
 		logrus.Panic("Can't connect to redis", err)
 	}
+
+	// Create a store dependency with the db connection
+	_ = db.NewStore(dbConn)
 
 	// connRedis, err := redis.ConnectToRedis(appConfig)
 	// if connRedis == nil {
@@ -48,6 +51,9 @@ func main() {
 	// if u not using method
 	// db.Connection(conn)
 	// redis.ConnectionRedis(connRedis)
+
+	//common func to take these all connections out of main
+	// db.Connectiondb(appConf)
 
 	app := gin.Default()
 

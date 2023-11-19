@@ -13,11 +13,11 @@ import (
 var ctx = context.Background()
 var counts int64
 
-type RedisInfo struct {
-	redisClient *redis.Client
-}
+// type RedisInfo struct {
+// 	redisClient *redis.Client
+// }
 
-func RedisClient(endpoint string) (*RedisInfo, error) {
+func RedisClient(endpoint string) (*redis.Client, error) {
 	fmt.Println("Go Redis Client")
 	redisEndpoint := endpoint
 
@@ -30,16 +30,14 @@ func RedisClient(endpoint string) (*RedisInfo, error) {
 	err := redisClient.Ping(ctx).Err()
 	if err != nil {
 		logrus.Errorln("Failed to connect to redis:", err)
-		return &RedisInfo{}, err
+		return nil, err
 	}
 
 	logrus.Info("Connected to Redis")
-	return &RedisInfo{
-		redisClient: redisClient,
-	}, nil
+	return redisClient, nil
 }
 
-func NewRedisClient(appConfig config.Config) (*RedisInfo, error) {
+func NewRedisClient(appConfig config.Config) (*redis.Client, error) {
 
 	for {
 		connection, err := RedisClient(appConfig.REDIS_ENDPOINT)

@@ -15,28 +15,22 @@ import (
 
 var counts int64
 
-type DbInfo struct {
-	dbClient *sql.DB
-}
-
-func openDB(dsn string) (DbInfo, error) {
+func openDB(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("pgx", dsn)
 	if err != nil {
-		return DbInfo{}, err
+		return nil, err
 	}
 
 	err = db.Ping()
 	if err != nil {
-		return DbInfo{}, err
+		return nil, err
 	}
 
-	return DbInfo{
-		dbClient: db,
-	}, nil
+	return db, nil
 
 }
 
-func NewdbConnection(appConfig config.Config) (DbInfo, error) {
+func NewdbConnection(appConfig config.Config) (*sql.DB, error) {
 	dsn := appConfig.DSN
 	fmt.Println(dsn)
 

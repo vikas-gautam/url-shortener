@@ -12,7 +12,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Signup(c *gin.Context) {
+var Repo *Service
+
+type Service struct {
+	Store db.Store
+}
+
+func (s *Service) Signup(c *gin.Context) {
 	validate := validator.New()
 
 	var userSignup models.User
@@ -36,10 +42,7 @@ func Signup(c *gin.Context) {
 		return
 	}
 
-	//save the mapping into the database
-	db := db.DbInfo{}
-
-	_, err := db.InsertUser(models.DBUser{
+	_, err := s.Store.InsertUser(models.DBUser{
 		FirstName: userSignup.FirstName,
 		LastName:  userSignup.LastName,
 		Email:     userSignup.Email,

@@ -3,7 +3,6 @@ package handlers
 import (
 	"auth-service/internal"
 	"auth-service/models"
-	"auth-service/storage/db"
 	"auth-service/storage/redis"
 	"database/sql"
 	"fmt"
@@ -16,10 +15,9 @@ import (
 
 var gw_reset_base = "http://localhost:9090/api/v1/reset/"
 
-func ResetPassword(c *gin.Context) {
+func (s *Service) ResetPassword(c *gin.Context) {
 	// validate := validator.New()
 	redis := redis.RedisInfo{}
-	db := db.DbInfo{}
 
 	resetToken := c.Param("token")
 
@@ -46,7 +44,7 @@ func ResetPassword(c *gin.Context) {
 	}
 
 	//logic to check if user already exists or not
-	_, err = db.GetUserByEmailid(username)
+	_, err = s.Store.GetUserByEmailid(username)
 	if err != nil && err == sql.ErrNoRows {
 		logrus.Error(err)
 		return
@@ -54,7 +52,7 @@ func ResetPassword(c *gin.Context) {
 
 	//logic to  update user's passwd
 
-	err = db.UpdateUser(username, hashPasswd)
+	err = s.Store.UpdateUser(username, hashPasswd)
 	if err != nil {
 		logrus.Error(err)
 		return
