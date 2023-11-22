@@ -3,6 +3,7 @@ package main
 import (
 	"auth-service/config"
 	"auth-service/routes"
+	"auth-service/routes/handlers"
 	"auth-service/storage/db"
 	"auth-service/storage/redis"
 
@@ -24,31 +25,23 @@ func main() {
 		logrus.Panic("Can't connect to database postgres", err)
 	}
 
-	// conn, err := db.ConnectToDB(appConfig)
-	// if conn == nil {
-	// 	logrus.Panic("Can't connect to database postgres", err)
-	// }
+	// Create a store dependency with the db connection
+	StoreValue := db.NewStore(dbConn)
+	service := &handlers.Service{Store: StoreValue}
+	handlers.NewRepo(service)
 
 	//connect to redis
 
-	connRedis, err := redis.NewRedisClient(confVars)
+	connRedis, err := redis.NewRedisClient(configInfo)
 	if connRedis == nil {
 		logrus.Panic("Can't connect to redis", err)
 	}
-
-	// Create a store dependency with the db connection
-	_ = db.NewStore(dbConn)
-
-	// connRedis, err := redis.ConnectToRedis(appConfig)
-	// if connRedis == nil {
-	// 	logrus.Panic("Can't connect to database postgres", err)
-	// }
 
 	// defer close(app.MailChan)
 	// fmt.Println("Starting mail listner")
 	// internal.ListenForMail()
 
-	// if u not using method
+	// if u r not using method
 	// db.Connection(conn)
 	// redis.ConnectionRedis(connRedis)
 

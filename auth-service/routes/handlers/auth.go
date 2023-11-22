@@ -1,14 +1,13 @@
 package handlers
 
 import (
-	"auth-service/internal"
 	"auth-service/models"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Auth(c *gin.Context) {
+func (s *Service) Auth(c *gin.Context) {
 
 	username, password, ok := c.Request.BasicAuth()
 
@@ -20,7 +19,7 @@ func Auth(c *gin.Context) {
 		return
 	}
 
-	authenticated, _, err := internal.EnsureAuth(username, password)
+	authenticated, _, err := s.EnsureAuth(username, password)
 
 	if !authenticated {
 		c.IndentedJSON(http.StatusBadRequest, models.Response{

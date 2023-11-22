@@ -3,7 +3,6 @@ package handlers
 import (
 	"auth-service/internal"
 	"auth-service/models"
-	"auth-service/storage/redis"
 	"database/sql"
 	"fmt"
 	"math/rand"
@@ -17,7 +16,6 @@ var gw_reset_base = "http://localhost:9090/api/v1/reset/"
 
 func (s *Service) ResetPassword(c *gin.Context) {
 	// validate := validator.New()
-	redis := redis.RedisInfo{}
 
 	resetToken := c.Param("token")
 
@@ -37,14 +35,15 @@ func (s *Service) ResetPassword(c *gin.Context) {
 	fmt.Printf("newPasswd and resetToken are: %v, %v: ", hashPasswd, resetToken)
 
 	// Fetch data from Redis
-	username, err := redis.GetData(resetToken)
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
+	// username, err := redis.GetData(resetToken)
+	// if err != nil {
+	// 	logrus.Error(err)
+	// 	return
+	// }
 
 	//logic to check if user already exists or not
-	_, err = s.Store.GetUserByEmailid(username)
+
+	_, err := s.Store.GetUserByEmailid(userInput.Email)
 	if err != nil && err == sql.ErrNoRows {
 		logrus.Error(err)
 		return
@@ -52,18 +51,18 @@ func (s *Service) ResetPassword(c *gin.Context) {
 
 	//logic to  update user's passwd
 
-	err = s.Store.UpdateUser(username, hashPasswd)
+	err = s.Store.UpdateUser(userInput.Email, hashPasswd)
 	if err != nil {
 		logrus.Error(err)
 		return
 	}
 
-	// Fetch data from Redis
-	err = redis.DelKey(resetToken)
-	if err != nil {
-		logrus.Error(err)
-		return
-	}
+	// // Fetch data from Redis
+	// err = redis.DelKey(resetToken)
+	// if err != nil {
+	// 	logrus.Error(err)
+	// 	return
+	// }
 
 	c.IndentedJSON(http.StatusOK, models.Response{
 		Status:  http.StatusText(http.StatusOK),
@@ -79,7 +78,6 @@ func tokenGenerator() string {
 
 func GenerateResetToken(c *gin.Context) {
 	// validate := validator.New()
-	redis := redis.RedisInfo{}
 
 	var passwdReset models.User
 
@@ -99,11 +97,11 @@ func GenerateResetToken(c *gin.Context) {
 	fmt.Println(generatedToken)
 
 	//inserting the same in redis
-	err := redis.SetData(generatedToken, userName)
-	if err != nil {
-		logrus.Errorf("error while setting key in redis: %s", err)
-		return
-	}
+	// err := redis.SetData(generatedToken, userName)
+	// if err != nil {
+	// 	logrus.Errorf("error while setting key in redis: %s", err)
+	// 	return
+	// }
 
 	// defer close(app.MailChan)
 	// fmt.Println("Starting mail listner")

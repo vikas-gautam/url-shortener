@@ -2,7 +2,9 @@ package redis
 
 import (
 	"auth-service/config"
+	"auth-service/models"
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -13,9 +15,24 @@ import (
 var ctx = context.Background()
 var counts int64
 
-// type RedisInfo struct {
-// 	redisClient *redis.Client
-// }
+//using DI ****************************************************************
+
+type Store interface {
+	InsertUser(models.DBUser) (int, error)
+	GetUserByEmailid(string) (models.DBUser, error)
+	UpdateUser(string, string) error
+}
+
+func NewStore(db *redis.Client) Store {
+	return &store{db}
+}
+
+// The actual store would contain some state. In this case it's the sql.db instance, that holds the connection to our database
+type store struct {
+	db *sql.DB
+}
+
+//#####################################################################
 
 func RedisClient(endpoint string) (*redis.Client, error) {
 	fmt.Println("Go Redis Client")

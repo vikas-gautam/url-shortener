@@ -18,6 +18,7 @@ const dbTimeout = time.Second * 3
 
 //using DI ****************************************************************
 
+
 type Store interface {
 	InsertUser(models.DBUser) (int, error)
 	GetUserByEmailid(string) (models.DBUser, error)

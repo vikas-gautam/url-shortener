@@ -14,6 +14,10 @@ import (
 
 var Repo *Service
 
+func NewRepo(inputService *Service) {
+	Repo = inputService
+}
+
 type Service struct {
 	Store db.Store
 }

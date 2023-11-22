@@ -1,38 +1,49 @@
 package internal
 
-import (
-	"auth-service/models"
-	"auth-service/storage/db"
-	"database/sql"
-	"errors"
+// import (
+// 	"auth-service/models"
+// 	"auth-service/storage/db"
+// 	"database/sql"
+// 	"errors"
 
-	"github.com/sirupsen/logrus"
-	"golang.org/x/crypto/bcrypt"
-)
+// 	"github.com/sirupsen/logrus"
+// 	"golang.org/x/crypto/bcrypt"
+// )
 
-func EnsureAuth(username, password string) (bool, models.DBUser, error) {
+// var Repo *Service
 
-	db := db.DbInfo{}
+// type Service struct {
+// 	Store db.Store
+// }
 
-	//logic to check if user already exists or not
-	userData, err := db.GetUserByEmailid(username)
-	if err != nil && err == sql.ErrNoRows {
-		logrus.Error(err)
-		return false, models.DBUser{}, errors.New("user name does not exist")
-	}
+// // Struct
+// // method
 
-	match := CheckPasswordHash(password, userData.Password)
+// // s := &Struct{}
 
-	//email not exists
-	if !match {
-		return false, models.DBUser{}, errors.New("invalid credentials")
-	} else {
-		return true, userData, nil
-	}
+// // {
 
-}
+// func (s *Service) EnsureAuth(username, password string) (bool, models.DBUser, error) {
 
-func CheckPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
-}
+// 	//logic to check if user already exists or not
+// 	userData, err := s.Store.GetUserByEmailid(username)
+// 	if err != nil && err == sql.ErrNoRows {
+// 		logrus.Error(err)
+// 		return false, models.DBUser{}, errors.New("user name does not exist")
+// 	}
+
+// 	match := CheckPasswordHash(password, userData.Password)
+
+// 	//email not exists
+// 	if !match {
+// 		return false, models.DBUser{}, errors.New("invalid credentials")
+// 	} else {
+// 		return true, userData, nil
+// 	}
+
+// }
+
+// func CheckPasswordHash(password, hash string) bool {
+// 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+// 	return err == nil
+// }
