@@ -25,17 +25,22 @@ func main() {
 		logrus.Panic("Can't connect to database postgres", err)
 	}
 
-	// Create a store dependency with the db connection
-	StoreValue := db.NewStore(dbConn)
-	service := &handlers.Service{Store: StoreValue}
-	handlers.NewRepo(service)
-
 	//connect to redis
-
 	connRedis, err := redis.NewRedisClient(configInfo)
 	if connRedis == nil {
 		logrus.Panic("Can't connect to redis", err)
 	}
+
+	// Create a store dependency with the db AND redis connection
+	RedisStoreValue := redis.NewRedisStore(connRedis)
+	DBStoreValue := db.NewStore(dbConn)
+
+	service := &handlers.Service{
+		RedisStore: RedisStoreValue,
+		DbStore:    DBStoreValue,
+	}
+
+	handlers.NewRepo(service)
 
 	// defer close(app.MailChan)
 	// fmt.Println("Starting mail listner")

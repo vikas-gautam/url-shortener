@@ -45,7 +45,7 @@ func (s *Service) Login(c *gin.Context) {
 func (s *Service) EnsureAuth(username, password string) (bool, models.DBUser, error) {
 
 	//logic to check if user already exists or not
-	userData, err := s.Store.GetUserByEmailid(username)
+	userData, err := s.DbStore.GetUserByEmailid(username)
 	if err != nil && err == sql.ErrNoRows {
 		logrus.Error(err)
 		return false, models.DBUser{}, errors.New("user name does not exist")

@@ -3,6 +3,7 @@ package handlers
 import (
 	"auth-service/models"
 	"auth-service/storage/db"
+	"auth-service/storage/redis"
 	"fmt"
 	"net/http"
 
@@ -19,7 +20,8 @@ func NewRepo(inputService *Service) {
 }
 
 type Service struct {
-	Store db.Store
+	RedisStore redis.RedisStore
+	DbStore    db.DBStore
 }
 
 func (s *Service) Signup(c *gin.Context) {
@@ -46,7 +48,7 @@ func (s *Service) Signup(c *gin.Context) {
 		return
 	}
 
-	_, err := s.Store.InsertUser(models.DBUser{
+	_, err := s.DbStore.InsertUser(models.DBUser{
 		FirstName: userSignup.FirstName,
 		LastName:  userSignup.LastName,
 		Email:     userSignup.Email,

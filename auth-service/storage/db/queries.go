@@ -18,14 +18,13 @@ const dbTimeout = time.Second * 3
 
 //using DI ****************************************************************
 
-
-type Store interface {
+type DBStore interface {
 	InsertUser(models.DBUser) (int, error)
 	GetUserByEmailid(string) (models.DBUser, error)
 	UpdateUser(string, string) error
 }
 
-func NewStore(db *sql.DB) Store {
+func NewStore(db *sql.DB) DBStore {
 	return &store{db}
 }
 

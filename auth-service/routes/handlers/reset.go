@@ -35,15 +35,16 @@ func (s *Service) ResetPassword(c *gin.Context) {
 	fmt.Printf("newPasswd and resetToken are: %v, %v: ", hashPasswd, resetToken)
 
 	// Fetch data from Redis
-	// username, err := redis.GetData(resetToken)
-	// if err != nil {
-	// 	logrus.Error(err)
-	// 	return
-	// }
+
+	username, err := s.RedisStore.GetData(resetToken)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
 
 	//logic to check if user already exists or not
 
-	_, err := s.Store.GetUserByEmailid(userInput.Email)
+	_, err = s.DbStore.GetUserByEmailid(username)
 	if err != nil && err == sql.ErrNoRows {
 		logrus.Error(err)
 		return
@@ -51,18 +52,18 @@ func (s *Service) ResetPassword(c *gin.Context) {
 
 	//logic to  update user's passwd
 
-	err = s.Store.UpdateUser(userInput.Email, hashPasswd)
+	err = s.DbStore.UpdateUser(username, hashPasswd)
 	if err != nil {
 		logrus.Error(err)
 		return
 	}
 
-	// // Fetch data from Redis
-	// err = redis.DelKey(resetToken)
-	// if err != nil {
-	// 	logrus.Error(err)
-	// 	return
-	// }
+	// Fetch data from Redis
+	err = s.RedisStore.DelKey(resetToken)
+	if err != nil {
+		logrus.Error(err)
+		return
+	}
 
 	c.IndentedJSON(http.StatusOK, models.Response{
 		Status:  http.StatusText(http.StatusOK),
@@ -76,7 +77,7 @@ func tokenGenerator() string {
 	return fmt.Sprintf("%x", b)
 }
 
-func GenerateResetToken(c *gin.Context) {
+func (s *Service) GenerateResetToken(c *gin.Context) {
 	// validate := validator.New()
 
 	var passwdReset models.User
@@ -96,12 +97,12 @@ func GenerateResetToken(c *gin.Context) {
 
 	fmt.Println(generatedToken)
 
-	//inserting the same in redis
-	// err := redis.SetData(generatedToken, userName)
-	// if err != nil {
-	// 	logrus.Errorf("error while setting key in redis: %s", err)
-	// 	return
-	// }
+	// inserting the same in redis
+	err := s.RedisStore.SetData(generatedToken, userName)
+	if err != nil {
+		logrus.Errorf("error while setting key in redis: %s", err)
+		return
+	}
 
 	// defer close(app.MailChan)
 	// fmt.Println("Starting mail listner")

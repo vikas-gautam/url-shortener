@@ -25,7 +25,7 @@ func SetupRoutes(app *gin.Engine) {
 	api.POST("/signup", handlers.Repo.Signup)
 	api.POST("/login", handlers.Repo.Login)
 	api.GET("/auth", handlers.Repo.Auth)
-	api.POST("/reset", handlers.GenerateResetToken)
+	api.POST("/reset", handlers.Repo.GenerateResetToken)
 	api.POST("/reset/:token", handlers.Repo.ResetPassword)
 
 }
