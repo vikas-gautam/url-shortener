@@ -11,11 +11,23 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	apiPort = "8082"
-)
-
 func main() {
+
+	configInfo := Initialize()
+
+	app := gin.Default()
+
+	routes.SetupRoutes(app)
+
+	if configInfo.APP_PORT == "" {
+		configInfo.APP_PORT = "8082"
+	}
+
+	app.Run("0.0.0.0:" + configInfo.APP_PORT) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	logrus.Infof("Starting AUTH service on port %s\n", configInfo.APP_PORT)
+}
+
+func Initialize() config.Config {
 
 	configInfo := config.Initialize()
 
@@ -33,7 +45,9 @@ func main() {
 
 	// Create a store dependency with the db AND redis connection
 	RedisStoreValue := redis.NewRedisStore(connRedis)
-	DBStoreValue := db.NewStore(dbConn)
+	DBStoreValue := db.NewDBStore(dbConn)
+
+	//################################################################
 
 	service := &handlers.Service{
 		RedisStore: RedisStoreValue,
@@ -41,6 +55,8 @@ func main() {
 	}
 
 	handlers.NewRepo(service)
+
+	return configInfo
 
 	// defer close(app.MailChan)
 	// fmt.Println("Starting mail listner")
@@ -53,10 +69,4 @@ func main() {
 	//common func to take these all connections out of main
 	// db.Connectiondb(appConf)
 
-	app := gin.Default()
-
-	routes.SetupRoutes(app)
-
-	app.Run("0.0.0.0:" + apiPort) // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
-	logrus.Infof("Starting AUTH service on port %s\n", apiPort)
 }

@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"auth-service/models"
-	"auth-service/storage/db"
-	"auth-service/storage/redis"
 	"fmt"
 	"net/http"
 
@@ -12,17 +10,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
-
-var Repo *Service
-
-func NewRepo(inputService *Service) {
-	Repo = inputService
-}
-
-type Service struct {
-	RedisStore redis.RedisStore
-	DbStore    db.DBStore
-}
 
 func (s *Service) Signup(c *gin.Context) {
 	validate := validator.New()

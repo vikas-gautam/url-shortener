@@ -24,7 +24,9 @@ type DBStore interface {
 	UpdateUser(string, string) error
 }
 
-func NewStore(db *sql.DB) DBStore {
+//AND condition applies to INTERFACE'S METHODS FOR STUCT associated
+
+func NewDBStore(db *sql.DB) DBStore {
 	return &store{db}
 }
 
